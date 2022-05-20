@@ -30,6 +30,17 @@ def create_persons_table():
     conn.commit()
     conn.close()
 
+def create_company_table():
+    """ Creates a table for company in the database"""
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE company(" \
+                  "id SERIAL PRIMARY KEY," \
+                  "company varchar(64)," \
+                  "country varchar(32));"
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
 
 def insert_stars(stars):
     """ Takes a Python list of stars and adds them to the database. Checks if
@@ -50,6 +61,16 @@ def insert_stars(stars):
     conn.commit()
     conn.close()
 
+def insert_companies(company):
+""" Takes a Python list of companies and adds them to the database."""
+conn.connect()
+cur = conn.cursor()
+for i in company:
+    cur.execute("INSERT INTO companies (company, country) VALUES (%s, %s)", (i[0], i[1]))
+    conn.commit()
+    conn.close()
+
 # Uncomment to Create Persons table
 # create_persons_table()
+# create_company_table()
 
