@@ -31,6 +31,47 @@ def create_persons_table():
     conn.commit()
     conn.close()
 
+def create_company_table():
+    """ Creates a table for company in the database 
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE company(" \
+                  "id SERIAL PRIMARY KEY," \
+                  "company varchar(64));" 
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
+def create_film_table():
+    """ Creates a table for film in the database
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE film(" \
+                  "id SERIAL PRIMARY KEY," \
+                  "title varchar(64)," \
+                  "score DECIMAL(2, 1)," \
+                  "release DATE," \
+                  "budget INT," \
+                  "gross INT," \
+                  "votes INT," \
+                  "rating varchar(5));"
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
+def create_genre_table():
+    """ Creates a table for genre in the database 
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE genre(" \
+                  "id SERIAL PRIMARY KEY," \
+                  "genre_type varchar(32));"
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
 
 def insert_stars(stars):
     """ Takes a Python list of stars and adds them to the database. Checks if
@@ -51,6 +92,28 @@ def insert_stars(stars):
     conn.commit()
     conn.close()
 
+def insert_companies(company):
+    """ Takes a Python list of companies and adds them to the database.
+    """
+    conn = connect()
+    cur = conn.cursor()
+    for i in company:
+      cur.execute("INSERT INTO company (company) VALUES (%s)", i)
+    conn.commit()
+    conn.close()
+
+def insert_genres(genre):
+    """ Takes a Python list of genres and adds them to the genre databese
+    """
+    conn = connect()
+    cur = conn.cursor()
+    for i in genre:
+      cur.execute("INSERT INTO genre (genre_type) VALUES (%s)", i)
+    conn.commit()
+    conn.close()
+
 # Uncomment to Create Persons table
 # create_persons_table()
-
+# create_company_table()
+# create_genre_table()
+create_film_table()
