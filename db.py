@@ -24,6 +24,7 @@ def create_persons_table():
     conn = connect()
     cur = conn.cursor()
     create_stmt = "CREATE TABLE persons(" \
+                  "id SERIAL PRIMARY KEY," \
                   "first_name   varchar(32)," \
                   "last_name varchar(32));"
     cur.execute(create_stmt)
