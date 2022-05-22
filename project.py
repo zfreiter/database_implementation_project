@@ -1,32 +1,37 @@
+import datetime
 import pandas as pd
 import numpy as np
 import psycopg2
 from db import insert_stars, insert_companies, insert_genres, insert_ratings
+from db import insert_film, connect
 
 # Get our csv as a dataframe and select the columns we want
 df = pd.read_csv('movies.csv')
 films = df[["name","score","released","budget", "gross", "votes", "rating"]]
 
-# Get the distinct ratings in the CSV and add them to the database
+# Get the distinct ratings in the CSV and add them to the database 
+# Uncomment insert_ratings to do it.
 ratings_series = df[["rating"]]
 ratings = ratings_series.rating.unique()
 list_of_ratings= list(ratings) # Covert the list numpy array to a Python List
-insert_ratings(list_of_ratings)
+# insert_ratings(list_of_ratings)
 
 
 def populate_films(films_df):
-    """ Takes a dataframe of films and stores each row in the database.
-        An empty column in the row results in nan (float type) for that column.
-        An empty string is passed in to the insert_film function for that 
-        column value when there is an empty value.
+    """ Takes a dataframe of films and stores each row in the database by 
+        passing each row into the insert_film() function. Pandas gives an empty
+        column in a row the nan (float type). If an empty value is present,
+        None keyword should be used to represent null in postgres.
     """
+    conn = connect()
+    cur = conn.cursor()
     for row in films_df.itertuples():
-        score = ""
-        date = ""
-        budget = ""
-        gross = ""
-        votes = ""
-        rating = ""
+        score = None
+        date = None
+        budget = None
+        gross = None
+        votes = None
+        rating = None
 
         if (type(row[7]) != float):
             rating = row[7]
@@ -34,11 +39,18 @@ def populate_films(films_df):
         # there is a score
         if (np.isnan(row[2]) == False):
 
-            budget = row[2]
+            score = row[2]
 
         # there is a release date.
         if type(row[3]) != float:
-            date = row[3].split(' (')[0]
+            date = row[3].split(' (')[0]    # now date is 'month day, year'
+            date = date.split(" ")          # now date is a list with ['month', 'day,', 'year']
+
+            if (len(date)) != 3:            # date must have month day and year
+                date = None
+            else:
+                day = date[1].replace(',', '')
+                date = date[2] + '-' + date[0] + '-' + day
 
         # there is a budget
         if (np.isnan(row[4]) == False):
@@ -52,11 +64,20 @@ def populate_films(films_df):
         if (np.isnan(row[6]) == False):
             votes = row[6]
 
+        # insert the row
+        if (rating != None):
+            cur.execute("SELECT id FROM rating WHERE rating_type = %s", (rating,))
+            rating_id = cur.fetchone()[0]
+            cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
+                        (row[1], score, date, 0, 0, votes, rating_id))
+        else:
+            cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
+                        (row[1], score, date, 0, 0, votes, None))
+    conn.commit()
+    conn.close()
 
-        # insert_film(row[1], score, date, budget, gross, votes, rating)
 
-
-# populate_films(films)
+populate_films(films)
 """
 df = df[["name", "score", "star"]]
 # Get the names of the stars in the CSV and add them to the database

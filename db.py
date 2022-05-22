@@ -50,13 +50,13 @@ def create_film_table():
     cur = conn.cursor()
     create_stmt = "CREATE TABLE film(" \
                   "id SERIAL PRIMARY KEY," \
-                  "title varchar(64)," \
+                  "title varchar(128)," \
                   "score DECIMAL(2, 1)," \
                   "release DATE," \
                   "budget INT," \
                   "gross INT," \
                   "votes INT," \
-                  "rating varchar(5));"
+                  "rating varchar(15));"
     cur.execute(create_stmt)
     conn.commit()
     conn.close()
@@ -96,6 +96,10 @@ def insert_ratings(ratings_array):
     conn.close()
 
 
+def insert_film(name, score, date, budget, gross, votes, rating):
+    print (name, score, date, budget, gross, votes, rating)
+
+
 def insert_stars(stars):
     """ Takes a Python list of stars and adds them to the database. Checks if
         name is singular or has both a first and last name.
@@ -114,6 +118,7 @@ def insert_stars(stars):
             pass
     conn.commit()
     conn.close()
+
 
 def insert_companies(company):
     """ Takes a Python list of companies and adds them to the database.
