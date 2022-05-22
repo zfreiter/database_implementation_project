@@ -73,6 +73,29 @@ def create_genre_table():
     conn.commit()
     conn.close()
 
+
+def create_ratings_table():
+    """ Creates a table for ratings in the database 
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE rating(" \
+                  "id SERIAL PRIMARY KEY," \
+                  "rating_type varchar(10));"
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
+
+def insert_ratings(ratings_array):
+    conn = connect()
+    cur = conn.cursor()
+    for i in ratings_array:
+        cur.execute("INSERT INTO rating (rating_type) VALUES (%s)", (i,))
+    conn.commit()
+    conn.close()
+
+
 def insert_stars(stars):
     """ Takes a Python list of stars and adds them to the database. Checks if
         name is singular or has both a first and last name.
@@ -116,4 +139,5 @@ def insert_genres(genre):
 # create_persons_table()
 # create_company_table()
 # create_genre_table()
-create_film_table()
+# create_film_table()
+# create_ratings_table()
