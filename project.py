@@ -10,12 +10,10 @@ from helpers import convert_date_to_postgres
 df = pd.read_csv('movies.csv')
 films = df[["name","score","released","budget", "gross", "votes", "rating"]]
 
-# Get the distinct ratings in the CSV and add them to the database 
-# Uncomment insert_ratings to do it.
+# Get the distinct ratings in the CSV and add them to the ratings table
 ratings_series = df[["rating"]]
 ratings = ratings_series.rating.unique()
-list_of_ratings= list(ratings) # Covert the list numpy array to a Python List
-# insert_ratings(list_of_ratings)
+list_of_ratings= list(ratings) # Covert the numpy array to a Python List
 
 
 def populate_films(films_df):
@@ -23,6 +21,8 @@ def populate_films(films_df):
         passing each row into the insert_film() function. Pandas gives an empty
         column in a row the nan (float type). If an empty value is present,
         None keyword should be used to represent null in postgres.
+        The film, and ratings table must be created prior to running this 
+        function and the ratings table must be populated.
     """
     conn = connect()
     cur = conn.cursor()
@@ -34,6 +34,7 @@ def populate_films(films_df):
         votes = None
         rating = None
 
+        # There is a rating
         if (type(row[7]) != float):
             rating = row[7]
 
@@ -59,19 +60,16 @@ def populate_films(films_df):
             votes = row[6]
 
         # insert the row
-        if (rating != None):
-            cur.execute("SELECT id FROM rating WHERE rating_type = %s", (rating,))
-            rating_id = cur.fetchone()[0]
-            cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
-                        (row[1], score, date, 0, 0, votes, rating_id))
-        else:
-            cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
-                        (row[1], score, date, 0, 0, votes, None))
+        insert_film(row[1], score, date, 0, 0, votes, rating, cur)
+
     conn.commit()
     conn.close()
 
 
+
+# insert_ratings(list_of_ratings)
 populate_films(films)
+
 """
 df = df[["name", "score", "star"]]
 # Get the names of the stars in the CSV and add them to the database

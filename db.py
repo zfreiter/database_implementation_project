@@ -96,8 +96,15 @@ def insert_ratings(ratings_array):
     conn.close()
 
 
-def insert_film(name, score, date, budget, gross, votes, rating):
-    print (name, score, date, budget, gross, votes, rating)
+def insert_film(name, score, date, budget, gross, votes, rating, cur):
+    if (rating != None):
+        cur.execute("SELECT id FROM rating WHERE rating_type = %s", (rating,))
+        rating_id = cur.fetchone()[0]
+        cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
+                    (name, score, date, 0, 0, votes, rating_id))
+    else:
+        cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
+                    (name, score, date, 0, 0, votes, None))
 
 
 def insert_stars(stars):
@@ -140,7 +147,7 @@ def insert_genres(genre):
     conn.commit()
     conn.close()
 
-# Uncomment to Create Persons table
+# Uncomment to Create Tables before running any functions that insert values
 # create_persons_table()
 # create_company_table()
 # create_genre_table()
