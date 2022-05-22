@@ -4,6 +4,7 @@ import numpy as np
 import psycopg2
 from db import insert_stars, insert_companies, insert_genres, insert_ratings
 from db import insert_film, connect
+from helpers import convert_date_to_postgres
 
 # Get our csv as a dataframe and select the columns we want
 df = pd.read_csv('movies.csv')
@@ -43,14 +44,7 @@ def populate_films(films_df):
 
         # there is a release date.
         if type(row[3]) != float:
-            date = row[3].split(' (')[0]    # now date is 'month day, year'
-            date = date.split(" ")          # now date is a list with ['month', 'day,', 'year']
-
-            if (len(date)) != 3:            # date must have month day and year
-                date = None
-            else:
-                day = date[1].replace(',', '')
-                date = date[2] + '-' + date[0] + '-' + day
+            date = convert_date_to_postgres(row[3])
 
         # there is a budget
         if (np.isnan(row[4]) == False):
