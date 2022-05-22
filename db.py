@@ -73,6 +73,21 @@ def create_genre_table():
     conn.commit()
     conn.close()
 
+def create_film_genre_table():
+    """ Creates a table for film-genre relation in the database
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE film_genre(" \
+                  "flim_id INTEGER NOT NULL," \
+                  "genre_id INTEGER NOT NULL," \
+                  "PRIMARY KEY (flim_id, genre_id)," \
+                  "FOREIGN KEY (flim_id) REFERENCES film (id)," \
+                  "FOREIGN KEY (genre_id) REFERENCES genre (id));"
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
 def insert_stars(stars):
     """ Takes a Python list of stars and adds them to the database. Checks if
         name is singular or has both a first and last name.
@@ -116,4 +131,5 @@ def insert_genres(genre):
 # create_persons_table()
 # create_company_table()
 # create_genre_table()
-create_film_table()
+# create_film_table()
+create_film_genre_table()
