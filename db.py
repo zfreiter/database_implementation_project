@@ -53,8 +53,8 @@ def create_film_table():
                   "title varchar(128)," \
                   "score DECIMAL(2, 1)," \
                   "release DATE," \
-                  "budget INT," \
-                  "gross INT," \
+                  "budget float(1)," \
+                  "gross float(1)," \
                   "votes INT," \
                   "rating varchar(15));"
     cur.execute(create_stmt)
@@ -101,10 +101,10 @@ def insert_film(name, score, date, budget, gross, votes, rating, cur):
         cur.execute("SELECT id FROM rating WHERE rating_type = %s", (rating,))
         rating_id = cur.fetchone()[0]
         cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
-                    (name, score, date, 0, 0, votes, rating_id))
+                    (name, score, date, budget, gross, votes, rating_id))
     else:
         cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
-                    (name, score, date, 0, 0, votes, None))
+                    (name, score, date, budget, gross, votes, None))
 
 
 def insert_stars(stars):

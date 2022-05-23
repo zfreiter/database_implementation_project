@@ -13,7 +13,7 @@ films = df[["name","score","released","budget", "gross", "votes", "rating"]]
 # Get the distinct ratings in the CSV and add them to the ratings table
 ratings_series = df[["rating"]]
 ratings = ratings_series.rating.unique()
-list_of_ratings= list(ratings) # Covert the numpy array to a Python List
+list_of_ratings = list(ratings) # Covert the numpy array to a Python List
 
 
 def populate_films(films_df):
@@ -55,23 +55,25 @@ def populate_films(films_df):
         if (np.isnan(row[5]) == False):
             gross = row[5]
 
+
         # There are votes
         if (np.isnan(row[6]) == False):
             votes = row[6]
 
         # insert the row
-        insert_film(row[1], score, date, 0, 0, votes, rating, cur)
+        insert_film(row[1], score, date, budget, gross, votes, rating, cur)
 
     conn.commit()
     conn.close()
 
 
-
+# Uncomment these to insert the ratings and films. Make sure all tables have
+# been created first
 # insert_ratings(list_of_ratings)
-populate_films(films)
+# populate_films(films)
 
-"""
-df = df[["name", "score", "star"]]
+
+# df = df[["name", "score", "star"]]
 # Get the names of the stars in the CSV and add them to the database
 #stars = df.star.unique()
 #list_of_stars = list(stars) # Covert the list numpy array to a Python List
@@ -90,4 +92,3 @@ list_of_genres = list_of_genres.values.tolist() # Convert the list numpy array t
 
 insert_companies(list_of_companies)
 insert_genres(list_of_genres)
-"""
