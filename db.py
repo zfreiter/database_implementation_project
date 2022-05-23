@@ -50,13 +50,13 @@ def create_film_table():
     cur = conn.cursor()
     create_stmt = "CREATE TABLE film(" \
                   "id SERIAL PRIMARY KEY," \
-                  "title varchar(64)," \
+                  "title varchar(128)," \
                   "score DECIMAL(2, 1)," \
                   "release DATE," \
-                  "budget INT," \
-                  "gross INT," \
+                  "budget float(1)," \
+                  "gross float(1)," \
                   "votes INT," \
-                  "rating varchar(5));"
+                  "rating varchar(15));"
     cur.execute(create_stmt)
     conn.commit()
     conn.close()
@@ -136,6 +136,7 @@ def insert_stars(stars):
             pass
     conn.commit()
     conn.close()
+
 
 def insert_companies(company):
     """ Takes a Python list of companies and adds them to the database.
