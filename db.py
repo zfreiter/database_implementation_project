@@ -43,6 +43,21 @@ def create_company_table():
     conn.commit()
     conn.close()
 
+def create_film_company_table():
+    """ Creates a table for film company relation in the database
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE film_company(" \
+                  "film_id INTEGER NOT NULL," \
+                  "company_id INTEGER NOT NULL," \
+                  "PRIMARY KEY (film_id)," \
+                  "FOREIGN KEY (film_id) REFERENCES film (id)," \
+                  "FOREIGN KEY (company_id) REFERENCES company (id));"
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
 def create_film_table():
     """ Creates a table for film in the database
     """
@@ -79,10 +94,10 @@ def create_film_genre_table():
     conn = connect()
     cur = conn.cursor()
     create_stmt = "CREATE TABLE film_genre(" \
-                  "flim_id INTEGER NOT NULL," \
+                  "film_id INTEGER NOT NULL," \
                   "genre_id INTEGER NOT NULL," \
-                  "PRIMARY KEY (flim_id, genre_id)," \
-                  "FOREIGN KEY (flim_id) REFERENCES film (id)," \
+                  "PRIMARY KEY (film_id, genre_id)," \
+                  "FOREIGN KEY (film_id) REFERENCES film (id)," \
                   "FOREIGN KEY (genre_id) REFERENCES genre (id));"
     cur.execute(create_stmt)
     conn.commit()
@@ -144,7 +159,28 @@ def insert_companies(company):
     conn = connect()
     cur = conn.cursor()
     for i in company:
-      cur.execute("INSERT INTO company (company) VALUES (%s)", i)
+      if(i != ""):
+        cur.execute("INSERT INTO company (company) VALUES (%s)", i)
+    conn.commit()
+    conn.close()
+
+def insert_film_company(company):
+    """ Takes a Python list of companies and searches for their ids
+    and adds them to the film ids to create an insert.
+    """
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM film")
+    film_id = cur.fetchall()
+    spot = 0
+    for i in company:
+      if(i != i):
+        spot = spot + 1
+      else:
+        cur.execute("SELECT id FROM company WHERE company = %s", (i,))
+        company_id = cur.fetchone()[0]
+        cur.execute("INSERT INTO film_company (film_id, company_id) VALUES (%s, %s)", (film_id[spot], company_id,))
+        spot = spot + 1
     conn.commit()
     conn.close()
 
@@ -158,9 +194,28 @@ def insert_genres(genre):
     conn.commit()
     conn.close()
 
+def insert_film_genre(genre):
+    """ Takes a Python list of genre and seaches for their ids 
+    and inserts them into the file_genre table.
+    """
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM film")
+    film_id = cur.fetchall()
+    spot = 0
+    for i in genre:
+      cur.execute("SELECT id FROM genre WHERE genre_type = %s", (i,))
+      genre_id = cur.fetchone()[0]
+      cur.execute("INSERT INTO film_genre (film_id, genre_id) VALUES (%s, %s)", (film_id[spot],genre_id,))
+      spot = spot + 1
+    conn.commit()
+    conn.close()
+
 # Uncomment to Create Tables before running any functions that insert values
 # create_persons_table()
 # create_company_table()
 # create_genre_table()
 # create_film_table()
 # create_ratings_table()
+# create_film_genre_table()
+# create_film_company_table()
