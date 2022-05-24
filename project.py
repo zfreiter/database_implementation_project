@@ -2,8 +2,8 @@ import datetime
 import pandas as pd
 import numpy as np
 import psycopg2
-from db import insert_stars, insert_companies, insert_genres, insert_ratings
-from db import insert_film, connect
+from db import insert_stars, insert_companies, insert_genres, insert_ratings, insert_film_genre
+from db import insert_film, connect, insert_film_company
 from helpers import convert_date_to_postgres
 
 # Get our csv as a dataframe and select the columns we want
@@ -84,11 +84,17 @@ df2 = pd.read_csv('movies.csv')
 company = df2[["company"]]
 genre = df2[["genre"]]
 
-list_of_companies = company.drop_duplicates() # Drop all the duplicate rows in the dataframe
-list_of_companies = list_of_companies.values.tolist() # Convert the list numpy array to a Python List
+# list_remove_na = company.dropna() # Drop all NaN(empty cells)
+# list_of_companies = list_company_na.drop_duplicates() # Drop all the duplicate rows in the dataframe
+# list_of_companies = list_of_companies.values.tolist() # Convert the list numpy array to a Python List
+# insert_companies(list_of_companies)
 
-list_of_genres = genre.drop_duplicates() # Drop all the duplicate rows in the dataframe
-list_of_genres = list_of_genres.values.tolist() # Convert the list numpy array to a Python List
+# list_of_genres = genre.drop_duplicates() # Drop all the duplicate rows in the dataframe
+# list_of_genres = list_of_genres.values.tolist() # Convert the list numpy array to a Python List
+# insert_genres(list_of_genres)
 
-insert_companies(list_of_companies)
-insert_genres(list_of_genres)
+# film_company = df2["company"].values.tolist() # Create a list of all the companies in the movies table
+# insert_film_company(film_company) # Insert all the film company relations
+
+# film_genre = df2["genre"].values.tolist() # Create a list of all the genre's in the movies table
+# insert_film_genre(film_genre) # Insert all the film genre relations
