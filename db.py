@@ -1,3 +1,6 @@
+""" db.py: This is where psycopg2 functions are defined. Most functions are
+    used to create the tables that make up the database and insert data.
+"""
 import psycopg2
 import os
 
@@ -210,12 +213,3 @@ def insert_film_genre(genre):
       spot = spot + 1
     conn.commit()
     conn.close()
-
-# Uncomment to Create Tables before running any functions that insert values
-# create_persons_table()
-# create_company_table()
-# create_genre_table()
-# create_film_table()
-# create_ratings_table()
-# create_film_genre_table()
-# create_film_company_table()
