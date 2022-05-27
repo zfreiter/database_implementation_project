@@ -213,3 +213,31 @@ def insert_film_genre(genre):
       spot = spot + 1
     conn.commit()
     conn.close()
+
+
+def do_query():
+    conn = connect()
+    cur = conn.cursor()
+    con_query = True
+    while con_query:
+      my_query = input("Enter your query: ")
+      try:
+        cur.execute(my_query)       
+        #result = cur.fetchall()
+        result = cur.fetchmany(10)
+        for row in result:
+          print(row)
+      except (Exception, psycopg2.Error) as error:
+        print("Error fetching data from PostgreSQL table", error)
+        conn.commit()
+        conn.close()
+        conn = connect()
+        cur = conn.cursor()
+      another_query = input("\nWould you like to do another query (y/n): ")
+      if (another_query == "n"):
+        con_query = False
+        print("\nGood Bye")
+    conn.commit()
+    conn.close()
+
+
