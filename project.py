@@ -1,3 +1,6 @@
+""" project.py: This is where Pandas functions go. All psycopg2 functions 
+    should be written in the db module and imported here when needed.
+"""
 import datetime
 import pandas as pd
 import numpy as np
@@ -14,6 +17,10 @@ films = df[["name","score","released","budget", "gross", "votes", "rating"]]
 ratings_series = df[["rating"]]
 ratings = ratings_series.rating.unique()
 list_of_ratings = list(ratings) # Covert the numpy array to a Python List
+
+df2 = pd.read_csv('movies.csv')
+company = df2[["company"]]
+genre = df2[["genre"]]
 
 
 def populate_films(films_df):
@@ -65,38 +72,3 @@ def populate_films(films_df):
 
     conn.commit()
     conn.close()
-
-
-# Uncomment these to insert the ratings and films. Make sure all tables have
-# been created first
-# insert_ratings(list_of_ratings)
-# populate_films(films)
-
-
-# df = df[["name", "score", "star"]]
-# Get the names of the stars in the CSV and add them to the database
-#stars = df.star.unique()
-#list_of_stars = list(stars) # Covert the list numpy array to a Python List
-#insert_stars(list_of_stars)
-
-df2 = pd.read_csv('movies.csv')
-
-company = df2[["company"]]
-genre = df2[["genre"]]
-
-# list_remove_na = company.dropna() # Drop all NaN(empty cells)
-# list_of_companies = list_company_na.drop_duplicates() # Drop all the duplicate rows in the dataframe
-# list_of_companies = list_of_companies.values.tolist() # Convert the list numpy array to a Python List
-# insert_companies(list_of_companies)
-
-# list_of_genres = genre.drop_duplicates() # Drop all the duplicate rows in the dataframe
-# list_of_genres = list_of_genres.values.tolist() # Convert the list numpy array to a Python List
-# insert_genres(list_of_genres)
-
-# film_company = df2["company"].values.tolist() # Create a list of all the companies in the movies table
-# insert_film_company(film_company) # Insert all the film company relations
-
-# film_genre = df2["genre"].values.tolist() # Create a list of all the genre's in the movies table
-# insert_film_genre(film_genre) # Insert all the film genre relations
-
-do_query()
