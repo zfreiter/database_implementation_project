@@ -240,4 +240,3 @@ def do_query():
     conn.commit()
     conn.close()
 
-

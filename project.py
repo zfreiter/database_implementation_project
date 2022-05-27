@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import psycopg2
 from db import insert_stars, insert_companies, insert_genres, insert_ratings, insert_film_genre
-from db import insert_film, connect, insert_film_company
+from db import insert_film, connect, insert_film_company, do_query
 from helpers import convert_date_to_postgres
 
 # Get our csv as a dataframe and select the columns we want
