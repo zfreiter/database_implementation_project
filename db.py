@@ -231,7 +231,7 @@ def insert_director(director):
                 name = i
                 cur.execute("SELECT id FROM persons WHERE first_name = %s",(name))
             director_id = cur.fetchone()[0]
-            cur.execute("INSERT INTO film_persons (film_id, person_id, role_status) VALUES (%s, %s, %s)", (film_id[spot], director_id, "Director",))
+            cur.execute("INSERT INTO film_persons (film_id, person_id, role_status) VALUES (%s, %s, %s)", (film_id[spot], director_id, "director",))
             spot = spot + 1
     conn.commit()
     conn.close()
@@ -254,7 +254,7 @@ def insert_writer(writer):
                 name = i
                 cur.execute("SELECT id FROM persons WHERE first_name = %s",(name))
             writer_id = cur.fetchone()[0]
-            cur.execute("INSERT INTO film_persons (film_id, person_id, role_status) VALUES (%s, %s, %s)", (film_id[spot], writer_id, "Writer",))
+            cur.execute("INSERT INTO film_persons (film_id, person_id, role_status) VALUES (%s, %s, %s)", (film_id[spot], writer_id, "writer",))
             spot = spot + 1
     conn.commit()
     conn.close()
@@ -277,7 +277,7 @@ def insert_star(star):
                 name = i
                 cur.execute("SELECT id FROM persons WHERE first_name = %s",(name))
             star_id = cur.fetchone()[0]
-            cur.execute("INSERT INTO film_persons (film_id, person_id, role_status) VALUES (%s, %s, %s)", (film_id[spot], star_id, "Star",))
+            cur.execute("INSERT INTO film_persons (film_id, person_id, role_status) VALUES (%s, %s, %s)", (film_id[spot], star_id, "star",))
             spot = spot + 1
     conn.commit()
     conn.close()
