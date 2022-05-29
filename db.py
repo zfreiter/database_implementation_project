@@ -61,6 +61,20 @@ def create_film_company_table():
     conn.commit()
     conn.close()
 
+
+def create_ratings_table():
+    """ Creates a table for ratings in the database 
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE rating(" \
+                  "id SERIAL PRIMARY KEY," \
+                  "rating_type varchar(10));"
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
+
 def create_film_table():
     """ Creates a table for film in the database
     """
@@ -74,10 +88,12 @@ def create_film_table():
                   "budget float(1)," \
                   "gross float(1)," \
                   "votes INT," \
-                  "rating varchar(15));"
+                  "rating INTEGER," \
+                  "FOREIGN KEY (rating) REFERENCES rating (id));"
     cur.execute(create_stmt)
     conn.commit()
     conn.close()
+
 
 def create_genre_table():
     """ Creates a table for genre in the database 
@@ -106,17 +122,6 @@ def create_film_genre_table():
     conn.commit()
     conn.close()
 
-def create_ratings_table():
-    """ Creates a table for ratings in the database 
-    """
-    conn = connect()
-    cur = conn.cursor()
-    create_stmt = "CREATE TABLE rating(" \
-                  "id SERIAL PRIMARY KEY," \
-                  "rating_type varchar(10));"
-    cur.execute(create_stmt)
-    conn.commit()
-    conn.close()
 
 def insert_ratings(ratings_array):
     conn = connect()
