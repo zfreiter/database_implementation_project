@@ -21,6 +21,17 @@ def connect():
         print ("Failed to connect to the database.")
 
 
+def create_role_type():
+    """ Creates the person_role type. People can be writers, directors, or stars.
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "DROP TYPE IF EXISTS person_role; CREATE TYPE person_role AS ENUM ('writer', 'director', 'star');" 
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
+
 def create_persons_table():
     """ Creates a table for persons in the database 
     """
@@ -30,6 +41,23 @@ def create_persons_table():
                   "id SERIAL PRIMARY KEY," \
                   "first_name   varchar(32)," \
                   "last_name varchar(32));"
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
+
+def create_film_persons_table():
+    """ Creates a table for the ways people are associcated with films
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE film_persons(" \
+                  "person_id INTEGER," \
+                  "film_id INTEGER," \
+                  "role_status person_role," \
+                  "FOREIGN KEY (film_id) REFERENCES film (id)," \
+                  "FOREIGN KEY (person_id) REFERENCES persons (id)," \
+                  "PRIMARY KEY (person_id, film_id, role_status));" 
     cur.execute(create_stmt)
     conn.commit()
     conn.close()
