@@ -40,3 +40,12 @@ print ("film-company has been inserted.")
 film_genre = df2["genre"].values.tolist() # Create a list of all the genre's in the movies table
 insert_film_genre(film_genre) # Insert all the film genre relations
 print ("film-genre has been inserted.")
+
+# Insert film Persons relations
+film_director = df2["director"].values.tolist()
+insert_director(film_director)
+film_writer = df2["writer"].values.tolist()
+insert_writer(film_writer)
+film_star = df2["star"].values.tolist()
+insert_star(film_star)
+print("film-persons has been inserted.")

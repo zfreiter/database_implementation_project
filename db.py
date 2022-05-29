@@ -205,6 +205,82 @@ def insert_companies(company):
     conn.commit()
     conn.close()
 
+def insert_film_persons(director, writer, star):
+    """ Takes a Python list of directors, writers, and stars and searches for their matching
+    films, then inserts them into the relational table
+    """
+    insert_director(director)
+    insert_writer(writer)
+    insert_star(star)
+
+def insert_director(director):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM film")
+    film_id = cur.fetchall()
+    spot = 0
+    for i in director:
+        if(i != i):
+            spot = spot + 1
+        else:
+            if type(i) == str and " " in i:
+                first_name = i.split()[0]
+                last_name = i.split()[1]
+                cur.execute("SELECT id FROM persons WHERE first_name = %s AND last_name = %s",(first_name, last_name))
+            else:
+                name = i
+                cur.execute("SELECT id FROM persons WHERE first_name = %s",(name))
+            director_id = cur.fetchone()[0]
+            cur.execute("INSERT INTO film_persons (film_id, person_id, role_status) VALUES (%s, %s, %s)", (film_id[spot], director_id, "Director",))
+            spot = spot + 1
+    conn.commit()
+    conn.close()
+
+def insert_writer(writer):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM film")
+    film_id = cur.fetchall()
+    spot = 0
+    for i in writer:
+        if(i != i):
+            spot = spot + 1
+        else:
+            if type(i) == str and " " in i:
+                first_name = i.split()[0]
+                last_name = i.split()[1]
+                cur.execute("SELECT id FROM persons WHERE first_name = %s AND last_name = %s",(first_name, last_name))
+            else:
+                name = i
+                cur.execute("SELECT id FROM persons WHERE first_name = %s",(name))
+            writer_id = cur.fetchone()[0]
+            cur.execute("INSERT INTO film_persons (film_id, person_id, role_status) VALUES (%s, %s, %s)", (film_id[spot], writer_id, "Writer",))
+            spot = spot + 1
+    conn.commit()
+    conn.close()
+
+def insert_star(star):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM film")
+    film_id = cur.fetchall()
+    spot = 0
+    for i in star:
+        if(i != i):
+            spot = spot + 1
+        else:
+            if type(i) == str and " " in i:
+                first_name = i.split()[0]
+                last_name = i.split()[1]
+                cur.execute("SELECT id FROM persons WHERE first_name = %s AND last_name = %s",(first_name, last_name))
+            else:
+                name = i
+                cur.execute("SELECT id FROM persons WHERE first_name = %s",(name))
+            star_id = cur.fetchone()[0]
+            cur.execute("INSERT INTO film_persons (film_id, person_id, role_status) VALUES (%s, %s, %s)", (film_id[spot], star_id, "Star",))
+            spot = spot + 1
+    conn.commit()
+    conn.close()
 
 def insert_film_company(company):
     """ Takes a Python list of companies and searches for their ids
