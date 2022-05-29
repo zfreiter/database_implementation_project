@@ -21,6 +21,17 @@ def connect():
         print ("Failed to connect to the database.")
 
 
+def create_role_type():
+    """ Creates the person_role type. People can be writers, directors, or stars.
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "DROP TYPE IF EXISTS person_role; CREATE TYPE person_role AS ENUM ('writer', 'director', 'star');" 
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
+
 def create_persons_table():
     """ Creates a table for persons in the database 
     """
@@ -34,6 +45,24 @@ def create_persons_table():
     conn.commit()
     conn.close()
 
+
+def create_film_persons_table():
+    """ Creates a table for the ways people are associcated with films
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE film_persons(" \
+                  "person_id INTEGER," \
+                  "film_id INTEGER," \
+                  "role_status person_role," \
+                  "FOREIGN KEY (film_id) REFERENCES film (id)," \
+                  "FOREIGN KEY (person_id) REFERENCES persons (id)," \
+                  "PRIMARY KEY (person_id, film_id, role_status));" 
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
+
 def create_company_table():
     """ Creates a table for company in the database 
     """
@@ -45,6 +74,7 @@ def create_company_table():
     cur.execute(create_stmt)
     conn.commit()
     conn.close()
+
 
 def create_film_company_table():
     """ Creates a table for film company relation in the database
@@ -61,6 +91,20 @@ def create_film_company_table():
     conn.commit()
     conn.close()
 
+
+def create_ratings_table():
+    """ Creates a table for ratings in the database 
+    """
+    conn = connect()
+    cur = conn.cursor()
+    create_stmt = "CREATE TABLE rating(" \
+                  "id SERIAL PRIMARY KEY," \
+                  "rating_type varchar(10));"
+    cur.execute(create_stmt)
+    conn.commit()
+    conn.close()
+
+
 def create_film_table():
     """ Creates a table for film in the database
     """
@@ -74,10 +118,12 @@ def create_film_table():
                   "budget float(1)," \
                   "gross float(1)," \
                   "votes INT," \
-                  "rating varchar(15));"
+                  "rating INTEGER," \
+                  "FOREIGN KEY (rating) REFERENCES rating (id));"
     cur.execute(create_stmt)
     conn.commit()
     conn.close()
+
 
 def create_genre_table():
     """ Creates a table for genre in the database 
@@ -90,6 +136,7 @@ def create_genre_table():
     cur.execute(create_stmt)
     conn.commit()
     conn.close()
+
 
 def create_film_genre_table():
     """ Creates a table for film-genre relation in the database
@@ -106,17 +153,6 @@ def create_film_genre_table():
     conn.commit()
     conn.close()
 
-def create_ratings_table():
-    """ Creates a table for ratings in the database 
-    """
-    conn = connect()
-    cur = conn.cursor()
-    create_stmt = "CREATE TABLE rating(" \
-                  "id SERIAL PRIMARY KEY," \
-                  "rating_type varchar(10));"
-    cur.execute(create_stmt)
-    conn.commit()
-    conn.close()
 
 def insert_ratings(ratings_array):
     conn = connect()
@@ -125,6 +161,7 @@ def insert_ratings(ratings_array):
         cur.execute("INSERT INTO rating (rating_type) VALUES (%s)", (i,))
     conn.commit()
     conn.close()
+
 
 def insert_film(name, score, date, budget, gross, votes, rating, cur):
     if (rating != None):
@@ -135,6 +172,7 @@ def insert_film(name, score, date, budget, gross, votes, rating, cur):
     else:
         cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
                     (name, score, date, budget, gross, votes, None))
+
 
 def insert_stars(stars):
     """ Takes a Python list of stars and adds them to the database. Checks if
@@ -167,6 +205,7 @@ def insert_companies(company):
     conn.commit()
     conn.close()
 
+
 def insert_film_company(company):
     """ Takes a Python list of companies and searches for their ids
     and adds them to the film ids to create an insert.
@@ -187,6 +226,7 @@ def insert_film_company(company):
     conn.commit()
     conn.close()
 
+
 def insert_genres(genre):
     """ Takes a Python list of genres and adds them to the genre databese
     """
@@ -196,6 +236,7 @@ def insert_genres(genre):
       cur.execute("INSERT INTO genre (genre_type) VALUES (%s)", i)
     conn.commit()
     conn.close()
+
 
 def insert_film_genre(genre):
     """ Takes a Python list of genre and seaches for their ids 
