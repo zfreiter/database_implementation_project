@@ -5,7 +5,7 @@ import datetime
 import pandas as pd
 import numpy as np
 import psycopg2
-from db import insert_stars, insert_companies, insert_genres, insert_ratings, insert_film_genre
+from db import insert_companies, insert_genres, insert_ratings, insert_film_genre
 from db import insert_film, connect, insert_film_company, do_query
 from helpers import convert_date_to_postgres
 
@@ -13,10 +13,19 @@ from helpers import convert_date_to_postgres
 df = pd.read_csv('movies.csv')
 films = df[["name","score","released","budget", "gross", "votes", "rating"]]
 
+
 # Get the distinct ratings in the CSV and add them to the ratings table
 ratings_series = df[["rating"]]
 ratings = ratings_series.rating.unique()
 list_of_ratings = list(ratings) # Covert the numpy array to a Python List
+
+
+# Get the writers, directors, and stars into one list
+all_people = df[["writer", "director", "star"]]
+all_people = all_people.stack()
+all_people = pd.unique(all_people)
+all_people = list(set(all_people))
+
 
 df2 = pd.read_csv('movies.csv')
 company = df2[["company"]]
@@ -72,3 +81,10 @@ def populate_films(films_df):
 
     conn.commit()
     conn.close()
+
+"""
+# Populate film_persons table
+film_writers = df[["name", "released", "writer", "director", "star"]] 
+all_films = all_films.drop_duplicates()
+print (all_films.head())
+"""

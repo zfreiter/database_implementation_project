@@ -174,13 +174,13 @@ def insert_film(name, score, date, budget, gross, votes, rating, cur):
                     (name, score, date, budget, gross, votes, None))
 
 
-def insert_stars(stars):
+def insert_persons(persons):
     """ Takes a Python list of stars and adds them to the database. Checks if
         name is singular or has both a first and last name.
     """
     conn = connect()
     cur = conn.cursor()
-    for i in stars:
+    for i in persons:
         if type(i) == str and " " in i:
             first_name = i.split()[0]
             last_name = i.split()[1]
