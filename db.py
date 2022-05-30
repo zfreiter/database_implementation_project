@@ -3,6 +3,7 @@
 """
 import psycopg2
 import os
+from helpers import *
 
 
 def connect():
@@ -174,13 +175,13 @@ def insert_film(name, score, date, budget, gross, votes, rating, cur):
                     (name, score, date, budget, gross, votes, None))
 
 
-def insert_stars(stars):
+def insert_persons(persons):
     """ Takes a Python list of stars and adds them to the database. Checks if
         name is singular or has both a first and last name.
     """
     conn = connect()
     cur = conn.cursor()
-    for i in stars:
+    for i in persons:
         if type(i) == str and " " in i:
             first_name = i.split()[0]
             last_name = i.split()[1]
@@ -190,6 +191,53 @@ def insert_stars(stars):
             cur.execute("INSERT INTO persons (first_name) VALUES (%s)", (name,))
         else:
             pass
+    conn.commit()
+    conn.close()
+
+
+def insert_film_persons(a_list, role):
+    """ Takes a list of lists in the form [film_title, film_year, person_name] and inserts a
+        [film_id, person_id, role] record into the database. 
+    """
+    conn = connect()
+    cur = conn.cursor()
+    for row in a_list:
+
+        # Get the year in the row
+        date = row[1]
+        if type(row[1]) != float:
+            date = convert_date_to_postgres(date) 
+            if (date is not None):
+                date = date.split("-")
+                year = date[0]
+
+
+        # Get the person_id using the person name
+        if type(row[2]) == str and " " in row[2]:
+            first_name = row[2].split()[0]
+            last_name = row[2].split()[1]
+            cur.execute("SELECT id FROM persons WHERE first_name = %s AND last_name = %s", (first_name, last_name))
+            person_id = cur.fetchone()
+
+
+        elif (type(row[2]) == str and " " not in row[2]):
+            first_name = row[2]
+            cur.execute("SELECT id FROM persons WHERE first_name = %s AND last_name IS NULL", (first_name,))
+            person_id = cur.fetchone()
+
+
+        # Get the film_id from the database using film_title and film_year
+        cur.execute("SELECT id FROM film WHERE title = %s AND EXTRACT(YEAR FROM release) = %s", (row[0], year))
+        film_id = cur.fetchone()
+        if (film_id is not None):
+            pass
+
+
+        # Insert the film_id, person_id and role into the many-to-many table
+        if (film_id is not None and person_id is not None):
+            cur.execute("INSERT INTO film_persons (person_id, film_id, role_status) VALUES (%s, %s, %s)", (person_id[0], film_id[0], role))
+
+
     conn.commit()
     conn.close()
 

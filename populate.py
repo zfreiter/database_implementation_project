@@ -9,6 +9,7 @@ from helpers import convert_date_to_postgres
 
 # Make sure all tables have been created first
 
+
 # Insert films
 insert_ratings(list_of_ratings)
 populate_films(films)
@@ -40,3 +41,13 @@ print ("film-company has been inserted.")
 film_genre = df2["genre"].values.tolist() # Create a list of all the genre's in the movies table
 insert_film_genre(film_genre) # Insert all the film genre relations
 print ("film-genre has been inserted.")
+
+
+# Insert Persons and their film relationships
+insert_persons(all_people)
+Insert the relationships between films and people
+insert_film_persons(film_writers, "writer");
+insert_film_persons(directors, "director")
+insert_film_persons(stars, "star")
+
+
