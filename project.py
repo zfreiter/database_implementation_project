@@ -27,6 +27,16 @@ all_people = pd.unique(all_people)
 all_people = list(set(all_people))
 
 
+# Get films, dates and people in a list by writer, direcotr, star
+film_writers = df[["name", "released", "writer"]]
+stars = df[["name", "released", "director"]]
+directors = df[["name", "released", "star"]]
+
+film_writers = film_writers.values.tolist()
+directors = directors.values.tolist()
+stars = stars.values.tolist()
+
+
 df2 = pd.read_csv('movies.csv')
 company = df2[["company"]]
 genre = df2[["genre"]]
