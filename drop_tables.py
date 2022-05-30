@@ -15,6 +15,6 @@ def drop_tables():
 def drop_table(table):
     conn = connect()
     cur = conn.cursor()
-    cur.execute("DROP TABLE IF EXISTS %s CASCADE;",(table))
+    cur.execute("DROP TABLE IF EXISTS %s CASCADE;",(table,))
     conn.commit()
     conn.close()
