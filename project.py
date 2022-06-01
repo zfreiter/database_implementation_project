@@ -11,7 +11,7 @@ from helpers import convert_date_to_postgres
 
 # Get our csv as a dataframe and select the columns we want
 df = pd.read_csv('movies.csv')
-films = df[["name","score","released","budget", "gross", "votes", "rating"]]
+films = df[["name","score","released","budget", "gross", "votes", "rating", "runtime"]]
 
 
 # Get the distinct ratings in the CSV and add them to the ratings table
@@ -59,6 +59,7 @@ def populate_films(films_df):
         gross = None
         votes = None
         rating = None
+        runtime = None
 
         # There is a rating
         if (type(row[7]) != float):
@@ -86,8 +87,12 @@ def populate_films(films_df):
         if (np.isnan(row[6]) == False):
             votes = row[6]
 
+        # There is a runtime
+        if (np.isnan(row[8]) == False):
+            runtime = row[8]
+
         # insert the row
-        insert_film(row[1], score, date, budget, gross, votes, rating, cur)
+        insert_film(row[1], score, date, budget, gross, votes, rating, runtime, cur)
 
     conn.commit()
     conn.close()
