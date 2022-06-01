@@ -47,6 +47,7 @@ print ("film-genre has been inserted.")
 insert_persons(all_people)
 print ("people have been inserted")
 
+
 # Insert the relationships between films and people
 insert_film_persons(film_writers, "writer");
 insert_film_persons(directors, "director")
