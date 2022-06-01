@@ -51,8 +51,10 @@ print ("people have been inserted")
 # Insert the relationships between films and people
 insert_film_persons(film_writers, "writer");
 insert_film_persons(directors, "director")
+print ("writers and directors have been inserted")
+
 insert_film_persons(stars, "star")
-print ("relationships have been inserted")
+print ("All relationships have been inserted")
 
 
 

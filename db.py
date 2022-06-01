@@ -120,6 +120,7 @@ def create_film_table():
                   "gross float(1)," \
                   "votes INT," \
                   "rating INTEGER," \
+                  "runtime INTEGER," \
                   "FOREIGN KEY (rating) REFERENCES rating (id));"
     cur.execute(create_stmt)
     conn.commit()
@@ -164,15 +165,15 @@ def insert_ratings(ratings_array):
     conn.close()
 
 
-def insert_film(name, score, date, budget, gross, votes, rating, cur):
+def insert_film(name, score, date, budget, gross, votes, rating, runtime, cur):
     if (rating != None):
         cur.execute("SELECT id FROM rating WHERE rating_type = %s", (rating,))
         rating_id = cur.fetchone()[0]
-        cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
-                    (name, score, date, budget, gross, votes, rating_id))
+        cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating, runtime) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                    (name, score, date, budget, gross, votes, rating_id, runtime))
     else:
-        cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
-                    (name, score, date, budget, gross, votes, None))
+        cur.execute("INSERT INTO film (title, score, release, budget, gross, votes, rating, runtime) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+                    (name, score, date, budget, gross, votes, None, runtime))
 
 
 def insert_persons(persons):
