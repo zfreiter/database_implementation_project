@@ -29,9 +29,10 @@ all_people = list(set(all_people))
 
 # Get films, dates and people in a list by writer, direcotr, star
 film_writers = df[["name", "released", "writer"]]
-stars = df[["name", "released", "director"]]
-directors = df[["name", "released", "star"]]
+stars = df[["name", "released", "star"]]
+directors = df[["name", "released", "director"]]
 
+print (directors.head())
 film_writers = film_writers.values.tolist()
 directors = directors.values.tolist()
 stars = stars.values.tolist()
