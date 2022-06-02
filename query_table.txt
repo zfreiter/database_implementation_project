@@ -1,0 +1,578 @@
+What is the average number of movies each year?
+—--------------------------------------------------------------------
+SELECT (COUNT(id) / COUNT(distinct EXTRACT(YEAR FROM release))) AS "Average movies per year"
+FROM film
+WHERE EXTRACT(YEAR from release) = EXTRACT(YEAR from release);
+
+Average movies per year 
+-------------------------
+                     185
+(1 row)
+
+SELECT EXTRACT(YEAR FROM release), COUNT(*)
+FROM film
+WHERE EXTRACT(YEAR FROM release) IS NOT NULL
+GROUP BY EXTRACT(YEAR FROM release)
+ORDER BY EXTRACT(YEAR FROM release) DESC;
+
+ date_part | count 
+-----------+-------
+      2020 |    32
+      2019 |   227
+      2018 |   205
+      2017 |   203
+      2016 |   198
+      2015 |   213
+      2014 |   196
+      2013 |   199
+      2012 |   192
+      2011 |   211
+      2010 |   192
+      2009 |   192
+      2008 |   204
+      2007 |   212
+      2006 |   196
+      2005 |   200
+      2004 |   191
+      2003 |   207
+      2002 |   193
+      2001 |   205
+      2000 |   200
+      1999 |   196
+      1998 |   205
+      1997 |   198
+      1996 |   199
+      1995 |   202
+      1994 |   202
+      1993 |   200
+      1992 |   181
+      1991 |   191
+      1990 |   191
+      1989 |   197
+      1988 |   193
+      1987 |   192
+      1986 |   208
+      1985 |   180
+      1984 |   156
+      1983 |   143
+      1982 |   126
+      1981 |   102
+      1980 |    79
+(41 rows)
+
+What is the highest-scoring movie in each year?
+------------------------------------------------------------------------------------------------------------------
+SELECT title, release, film.score FROM film INNER JOIN (
+	SELECT MAX(score) AS score, EXTRACT(YEAR FROM release) AS YEAR 
+FROM film GROUP BY EXTRACT(YEAR FROM release) 
+)
+AS s_q
+ON film.score = s_q.score AND EXTRACT(YEAR from release) = s_q.year
+
+                       title                       |  release   | score 
+---------------------------------------------------+------------+-------
+ Star Wars: Episode V - The Empire Strikes Back    | 1980-06-20 |   8.7
+ Indiana Jones and the Raiders of the Lost Ark     | 1981-06-12 |   8.4
+ Das Boot                                          | 1982-02-10 |   8.3
+ Scarface                                          | 1983-12-09 |   8.3
+ Star Wars: Episode VI - Return of the Jedi        | 1983-05-25 |   8.3
+ The Business of Show Business                     | 1983-02-15 |   8.3
+ Once Upon a Time in America                       | 1984-06-01 |   8.4
+ Repentance                                        | 1987-05-18 |   8.3
+ Back to the Future                                | 1985-07-03 |   8.5
+ Aliens                                            | 1986-07-18 |   8.3
+ Full Metal Jacket                                 | 1987-07-10 |   8.3
+ Die Hard                                          | 1988-07-20 |   8.2
+ Indiana Jones and the Last Crusade                | 1989-05-24 |   8.2
+ Goodfellas                                        | 1990-09-21 |   8.7
+ The Silence of the Lambs                          | 1991-02-14 |   8.6
+ Reservoir Dogs                                    | 1992-09-02 |   8.3
+ Jurassic Park                                     | 1993-06-11 |   8.1
+ Farewell My Concubine                             | 1993-10-15 |   8.1
+ The Shawshank Redemption                          | 1994-10-14 |   9.3
+ Chungking Express                                 | 1996-03-08 |   8.1
+ Se7en                                             | 1995-09-22 |   8.6
+ La Haine                                          | 1996-02-23 |   8.1
+ Fargo                                             | 1996-04-05 |   8.1
+ Trainspotting                                     | 1996-08-09 |   8.1
+ Life Is Beautiful                                 | 1997-12-20 |   8.6
+ Saving Private Ryan                               | 1998-07-24 |   8.6
+ Fight Club                                        | 1999-10-15 |   8.8
+ Gladiator                                         | 2000-05-05 |   8.5
+ The Lord of the Rings: The Fellowship of the Ring | 2001-12-19 |   8.8
+ The Lord of the Rings: The Two Towers             | 2002-12-18 |   8.7
+ City of God                                       | 2004-02-13 |   8.6
+ The Lord of the Rings: The Return of the King     | 2003-12-17 |   8.9
+ Howl's Moving Castle                              | 2005-06-17 |   8.2
+ Downfall                                          | 2005-04-08 |   8.2
+ Black Friday                                      | 2007-02-09 |   8.5
+ Batman Begins                                     | 2005-06-15 |   8.2
+ Black                                             | 2005-02-04 |   8.2
+ The Departed                                      | 2006-10-06 |   8.5
+ The Prestige                                      | 2006-10-20 |   8.5
+ The Dark Knight                                   | 2008-07-18 |   9.0
+ 3 Idiots                                          | 2009-12-25 |   8.4
+ Inception                                         | 2010-07-16 |   8.8
+ The Intouchables                                  | 2011-11-02 |   8.5
+ Django Unchained                                  | 2012-12-25 |   8.4
+ The Dark Knight Rises                             | 2012-07-20 |   8.4
+ The Hunt                                          | 2013-01-10 |   8.3
+ Interstellar                                      | 2014-11-07 |   8.6
+ Drishyam                                          | 2015-07-31 |   8.2
+ Your Name.                                        | 2017-04-07 |   8.4
+ Dangal                                            | 2016-12-21 |   8.4
+ Coco                                              | 2017-11-22 |   8.4
+ Avengers: Infinity War                            | 2018-04-27 |   8.4
+ Spider-Man: Into the Spider-Verse                 | 2018-12-14 |   8.4
+ Capharnaüm                                        | 2018-09-20 |   8.4
+ Parasite                                          | 2019-11-08 |   8.6
+ 1917                                              | 2020-01-10 |   8.3
+(56 rows)
+
+Average gross pre rating.
+	—-----------------------------------------------------
+	SELECT r.rating_type, AVG(f.gross)
+FROM rating r, film f
+WHERE f.rating = r.id
+GROUP BY r.rating_type
+ORDER BY AVG(f.gross) DESC;
+
+ rating_type |        avg         
+-------------+--------------------
+ TV-PG       |       150353106.25
+ G           | 142043334.00657895
+ PG-13       | 130877145.40506935
+ PG          | 106441540.08837971
+ TV-MA       |  79170782.33333333
+ R           |  42668819.72820371
+ Approved    |           36565280
+ Not Rated   | 17795901.343629345
+ NC-17       |           10763243
+ X           |  8485984.333333334
+ TV-14       |            5756185
+ Unrated     | 1605119.2340425532
+(12 rows)
+
+SELECT avg as Average, year*10 as Decade 
+FROM (
+SELECT AVG(gross),(CAST(EXTRACT(YEAR from release) as int)/10) as year 
+FROM film 
+WHERE release IS NOT NULL 
+GROUP BY year 
+ORDER BY year ASC
+) as decades
+
+      average       | decade 
+--------------------+--------
+ 24772884.722866893 |   1980
+ 49018739.400312334 |   1990
+  92559096.61094378 |   2000
+  132338543.3835549 |   2010
+ 163663830.76190478 |   2020
+(5 rows)
+
+SELECT AVG(gross),EXTRACT(YEAR from release) as year 
+FROM film 
+WHERE release IS NOT NULL 
+GROUP BY year 
+ORDER BY year ASC
+
+        avg         | year 
+--------------------+------
+ 31909009.684931505 | 1980
+ 24764490.714285713 | 1981
+ 28432672.834710743 | 1982
+ 21294702.952755906 | 1983
+  23893575.59868421 | 1984
+ 21581528.175757576 | 1985
+ 19363435.129032258 | 1986
+ 22487367.466292135 | 1987
+  26013056.47027027 | 1988
+ 31845067.588235293 | 1989
+ 38678172.016483516 | 1990
+ 33239933.666666668 | 1991
+  39819400.62777778 | 1992
+  39744473.15025907 | 1993
+        47078259.98 | 1994
+  46481557.98492462 | 1995
+  50732943.71717171 | 1996
+  66371537.29591837 | 1997
+  54461330.21212121 | 1998
+  71968245.52910052 | 1999
+  66475097.48469388 | 2000
+  74688875.97044335 | 2001
+  85937489.42487046 | 2002
+  90343124.50724638 | 2003
+  95487364.09424084 | 2004
+        90311872.49 | 2005
+  93340016.40816326 | 2006
+  99521389.65402843 | 2007
+ 103084317.44334975 | 2008
+ 126976892.57291667 | 2009
+     121371304.9375 | 2010
+ 115954444.73333333 | 2011
+     134534554.8125 | 2012
+ 130205933.24623115 | 2013
+ 128393074.53061225 | 2014
+ 131438689.84433962 | 2015
+ 140294353.58080807 | 2016
+  146863992.5812808 | 2017
+ 139344257.51707318 | 2018
+  134807822.6830357 | 2019
+ 163663830.76190478 | 2020
+(41 rows)
+
+SELECT AVG(gross) from film
+
+        avg        
+-------------------
+ 78500540.96871239
+(1 row)
+
+Which year had the most G-rated movies released? Who was the biggest actor that year?
+SELECT first_name, last_name, actor_count.count 
+FROM (
+SELECT COUNT(*), EXTRACT(YEAR FROM release) as year 
+FROM film f JOIN rating r ON f.rating = r.id 
+WHERE release IS NOT NULL AND rating_type = 'G' 
+GROUP BY year 
+ORDER BY count 
+DESC LIMIT 1
+) as g_year, 
+(
+SELECT COUNT(*), first_name, last_name, EXTRACT(YEAR from release) as year 
+FROM film f JOIN film_persons fp ON f.id = fp.film_id JOIN persons p ON p.id = fp.person_id 
+WHERE role_status = 'star' 
+GROUP by first_name, last_name, year 
+ORDER BY count DESC
+) as actor_count 
+WHERE actor_count.year = g_year.year 
+LIMIT 1
+
+ first_name  | last_name | count 
+-------------+-----------+-------
+ Christopher | Lambert   |     3
+(1 row)
+
+Which production company produces the lowest budget movies? How many do they release per year? NOTE: This could be improved by changing the 40 to a query for the year range
+—-----------------------------------------------------
+SELECT (CAST(COUNT(*) AS decimal)/40) AS per_year, lowest_budget.company 
+FROM film f JOIN film_company fc ON f.id = fc.film_id 
+JOIN company c ON fc.company_id = c.id 
+JOIN (
+SELECT avg, company 
+FROM (
+SELECT AVG(f.budget), c.company 
+FROM film f JOIN film_company fc ON f.id = fc.film_id 
+JOIN company c ON c.id = fc.company_id 
+WHERE budget IS NOT NULL 
+GROUP BY c.company
+) as averages 
+GROUP BY company, avg 
+ORDER BY avg 
+ASC LIMIT 1
+) as lowest_budget ON lowest_budget.company = c.company 
+GROUP BY lowest_budget.company;
+
+        per_year        |       company       
+------------------------+---------------------
+ 0.02500000000000000000 | Pirromount Pictures
+(1 row)
+
+What is the shortest movie(run-time) and what year was it released?
+----------------------------------------------------------------------------------------------------
+SELECT EXTRACT(year FROM release) as year, MIN(runtime) as runtime
+FROM film
+GROUP BY year
+ORDER BY runtime ASC LIMIT 1;
+
+ year | runtime 
+------+---------
+ 1983 |      55
+(1 row)
+
+Who were the director and main actor/actress of the highest viewer-scored movie?
+—--------------------------------------------------------------------------------------------------------
+(SELECT p.first_name, p.last_name, fp.role_status, f.title, f.score
+FROM film f, film_persons fp, persons p
+WHERE f.score IS NOT NULL
+AND f.id = fp.film_id
+and fp.person_id = p.id
+GROUP by p.first_name, p.last_name, fp.role_status, f.title, f.score
+ORDER BY MAX(f.score) DESC LIMIT 3)
+INTERSECT
+(SELECT p.first_name, p.last_name, fp.role_status, f.title, f.score
+FROM film f, film_persons fp, persons p
+WHERE f.score IS NOT NULL
+AND f.id = fp.film_id
+and fp.person_id = p.id
+GROUP by p.first_name, p.last_name, fp.role_status, f.title, f.score
+ORDER BY MAX(f.score))
+
+ first_name | last_name | role_status |          title           | score 
+------------+-----------+-------------+--------------------------+-------
+ Tim        | Robbins   | star        | The Shawshank Redemption |   9.3
+ Frank      | Darabont  | director    | The Shawshank Redemption |   9.3
+ Stephen    | King      | writer      | The Shawshank Redemption |   9.3
+(3 rows)
+
+Which country released the most movies from 1986 to 1991?
+	Country was not included in the tables so I added a new query
+What was the total number of movies made from 1980 to 1990 and what was the total budget and gross for the decade.?
+—---------------------------------------------------------------------------------------------------------------
+SELECT COUNT(*) as "Movies made", sum(budget) AS "Budget total for 1980 to 1990",
+sum(gross) AS "Gross total for 1980 to 1990"
+FROM film
+WHERE EXTRACT(Year FROM release) >= 1980
+AND EXTRACT(YEAR FROM release) <= 1980;
+
+ Movies made | Budget total for 1980 to 1990 | Gross total for 1980 to 1990 
+-------------+-------------------------------+------------------------------
+          79 |                 4.1175002e+08 |                2.3293578e+09
+(1 row)
+
+Have any directors ever directed a movie for each viewership rating? If so, how many?
+—---------------------------------------------------------------------------------------------------------------
+	SELECT count, first_name, last_name 
+FROM (
+SELECT COUNT(DISTINCT(rating)), first_name, last_name 
+FROM film f 
+JOIN film_persons fp ON f.id = fp.film_id 
+JOIN persons p ON fp.person_id = p.id 
+WHERE role_status = 'director' 
+GROUP BY first_name,last_name
+) as rating_count 
+WHERE count=13
+
+ count | first_name | last_name 
+-------+------------+-----------
+(0 rows)
+
+Who is the most prolific actor by country? Who is the least?
+Country was not included in the tables so I added a new query
+Give a list of all the genre by order largest to smallest in amount of movies associated   with that genre
+—---------------------------------------------------------------------------------
+SELECT g.genre_type, COUNT(fg.genre_id)
+FROM genre g, film_genre fg
+WHERE fg.genre_id = g.id
+GROUP BY g.genre_type
+ORDER BY COUNT(fg.genre_id) desc;
+
+ genre_type | count 
+------------+-------
+ Comedy     |  2245
+ Action     |  1705
+ Drama      |  1518
+ Crime      |   551
+ Biography  |   443
+ Adventure  |   427
+ Animation  |   338
+ Horror     |   322
+ Fantasy    |    44
+ Mystery    |    20
+ Thriller   |    16
+ Family     |    11
+ Romance    |    10
+ Sci-Fi     |    10
+ Western    |     3
+ Musical    |     2
+ Sport      |     1
+ Music      |     1
+ History    |     1
+(19 rows)
+
+Which movie genre, on average, grosses the most money?
+SELECT g.genre_type, AVG(f.gross)
+FROM genre g, film_genre fg, film f
+WHERE f.id = fg.film_id AND fg.genre_id = g.id
+GROUP BY g.genre_type
+ORDER BY COUNT(f.gross) DESC LIMIT 1;
+
+ genre_type |        avg        
+------------+-------------------
+ Comedy     | 44331874.24954379
+(1 row)
+
+What is the average viewer score for each viewership rating?
+—------------------------------------------------------------------------------
+SELECT r.rating_type AS "Rating", TRUNC(AVG(f.score),4) AS "Average score"
+FROM rating r, film f
+WHERE f.rating = r.id
+GROUP BY r.rating_type
+ORDER BY AVG(f.score) DESC;
+
+  Rating   | Average score 
+-----------+---------------
+ TV-MA     |        7.0222
+ TV-PG     |        6.9400
+ Not Rated |        6.9180
+ X         |        6.9000
+ Unrated   |        6.6173
+ G         |        6.5901
+ NC-17     |        6.5478
+ R         |        6.4463
+ TV-14     |        6.3000
+ PG-13     |        6.2872
+ PG        |        6.2235
+ Approved  |        3.4000
+(12 rows)
+
+Country was not included in the tables so I added a new query
+What company has produced the most movies and how many?
+—------------------------------------------------------------------------
+(SELECT c.company, COUNT(x.company_id)
+FROM company c, film_company x
+WHERE x.company_id = c.id
+GROUP BY c.company
+ORDER BY COUNT(x.company_id) DESC LIMIT 1)
+INTERSECT
+(SELECT c.company, COUNT(x.company_id)
+FROM company c, film_company x
+WHERE x.company_id = c.id
+GROUP BY c.company
+ORDER BY COUNT(x.company_id) );
+
+      company       | count 
+--------------------+-------
+ Universal Pictures |   377
+(1 row)
+
+Who is the most prolific actor? Who is the most prolific writer? Have they ever worked on a movie together?
+	—-----------------------------------------------------------------------------------------
+SELECT star, writer
+FROM
+(SELECT p.first_name, p.last_name, COUNT(p.id)
+FROM persons p, film_persons f
+WHERE p.id = f.person_id AND f.role_status = 'writer'
+GROUP BY p.first_name, p.last_name
+ORDER BY COUNT(p.id) DESC LIMIT 1) as writer,
+(SELECT p.first_name, p.last_name, COUNT(p.id)
+FROM persons p, film_persons f
+WHERE p.id = f.person_id AND f.role_status = 'star'
+GROUP BY p.first_name, p.last_name
+ORDER BY COUNT(p.id) DESC LIMIT 1) as star
+
+       star        |      writer      
+-------------------+------------------
+ (Nicolas,Cage,43) | (Woody,Allen,37)
+(1 row)
+
+What’s the average runtime of movies by year?
+---------------------------------------------------------------------------------------------------------
+SELECT EXTRACT(YEAR FROM release) AS year, TRUNC(AVG(runtime), 4)
+FROM film
+GROUP BY year
+ORDER BY year DESC;
+
+year |  trunc   
+------+----------
+      | 102.9649
+ 2020 | 108.1935
+ 2019 | 112.3612
+ 2018 | 111.5707
+ 2017 | 111.1083
+ 2016 | 110.6010
+ 2015 | 110.3239
+ 2014 | 110.6326
+ 2013 | 110.5879
+ 2012 | 106.9267
+ 2011 | 107.7914
+ 2010 | 108.6614
+ 2009 | 106.6354
+ 2008 | 105.9313
+ 2007 | 109.3632
+ 2006 | 107.9744
+ 2005 | 107.8450
+ 2004 | 109.6335
+ 2003 | 109.2705
+ 2002 | 106.2072
+ 2001 | 108.1268
+ 2000 | 108.4100
+ 1999 | 107.3112
+ 1998 | 107.3121
+ 1997 | 108.6313
+ 1996 | 107.5929
+ 1995 | 104.6138
+ 1994 | 107.0990
+ 1993 | 106.6250
+ 1992 | 106.4640
+ 1991 | 106.7329
+ 1990 | 104.5549
+ 1989 | 103.5532
+ 1988 | 104.4611
+ 1987 | 101.0260
+ 1986 | 101.7403
+ 1985 | 102.7388
+ 1984 | 104.7115
+ 1983 | 103.1118
+ 1982 | 105.2539
+ 1981 | 106.8333
+ 1980 | 105.7088
+(42 rows)
+
+Which director produced the most action movies from 2000 to 2010?
+—-----------------------------------------------------------------------------------
+	SELECT p.first_name, p.last_name, COUNT(p.id)
+FROM persons p, film_persons f, film fm, film_genre fg
+WHERE p.id = f.person_id AND f.role_status = 'director'
+AND f.film_id = fm.id AND fm.id = fg.film_id
+AND fg.genre_id = 3
+GROUP BY p.first_name, p.last_name, f.role_status
+ORDER BY COUNT(p.id) DESC LIMIT 1;
+
+	—---------------------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------------------
+SELECT first_name, last_name, person_id 
+FROM 
+	(SELECT COUNT(film.id), film_persons.person_id
+	FROM film JOIN film_genre
+	ON film.id = film_genre.film_id
+	JOIN film_persons
+	ON film_persons.film_id = film.id
+	WHERE EXTRACT(YEAR FROM release) BETWEEN 2000 AND 2010
+	AND film_genre.genre_id = 3
+	AND film_persons.role_status = 'director'
+	GROUP BY film_persons.person_id
+	ORDER BY COUNT(film.id) DESC LIMIT 1) as sq
+JOIN persons on person_id = persons.id
+
+ first_name | last_name | person_id 
+------------+-----------+-----------
+ Tony       | Scott     |      8412
+(1 row)
+
+Which country has the production company which produced the most movies?
+We decided to not include country so I changed this query to,
+What is the max score for films and how many occurrences are there
+----------------------------------------------------------------------------
+(SELECT score, count(score)
+FROM film
+WHERE score IS NOT NULL
+GROUP by score
+ORDER BY MAX(score) DESC LIMIT 1)
+INTERSECT
+(SELECT score, count(score)
+FROM film
+WHERE score IS NOT NULL
+GROUP BY score
+ORDER BY MAX(score));
+
+ score | count 
+-------+-------
+   9.3 |     1
+(1 row)
+
+How many movies came out between 1990 and 2000?
+------------------------------------------------------------------------
+SELECT COUNT(*)
+FROM film
+WHERE EXTRACT(YEAR FROM release) >= 1990 
+AND EXTRACT(YEAR FROM release) <= 2000
+
+ count 
+-------
+  2165
+(1 row)
+
