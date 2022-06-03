@@ -15,8 +15,9 @@ films = df[["name","score","released","budget", "gross", "votes", "rating", "run
 
 
 # Get the distinct ratings in the CSV and add them to the ratings table
-ratings_series = df[["rating"]]
+ratings_series = df[["rating"]].dropna()
 ratings = ratings_series.rating.unique()
+print (ratings)
 list_of_ratings = list(ratings) # Covert the numpy array to a Python List
 
 
@@ -27,7 +28,7 @@ all_people = pd.unique(all_people)
 all_people = list(set(all_people))
 
 
-# Get films, dates and people in a list by writer, direcotr, star
+# Get films, dates and people in a list by writer, director, star
 film_writers = df[["name", "released", "writer"]]
 stars = df[["name", "released", "star"]]
 directors = df[["name", "released", "director"]]
@@ -36,7 +37,7 @@ film_writers = film_writers.values.tolist()
 directors = directors.values.tolist()
 stars = stars.values.tolist()
 
-
+# Get company and genre values 
 df2 = pd.read_csv('movies.csv')
 company = df2[["company"]]
 genre = df2[["genre"]]
@@ -97,9 +98,3 @@ def populate_films(films_df):
     conn.commit()
     conn.close()
 
-"""
-# Populate film_persons table
-film_writers = df[["name", "released", "writer", "director", "star"]] 
-all_films = all_films.drop_duplicates()
-print (all_films.head())
-"""

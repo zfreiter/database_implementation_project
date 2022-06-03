@@ -1,5 +1,7 @@
 """ db.py: This is where psycopg2 functions are defined. Most functions are
     used to create the tables that make up the database and insert data.
+    Connecting to the database requires adding the database host address, 
+    username and password to the Linux path.
 """
 import psycopg2
 import os
@@ -306,6 +308,8 @@ def insert_film_genre(genre):
 
 
 def do_query():
+    """ Allows users to enter queries from the console.
+    """
     conn = connect()
     cur = conn.cursor()
     con_query = True

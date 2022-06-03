@@ -1,3 +1,6 @@
+""" create_db.py: This module creates all of the tables in the 
+    database by calling the functions that execute the PostgreSQL statements.
+"""
 import psycopg2
 import os
 from db import *
