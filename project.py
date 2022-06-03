@@ -17,7 +17,6 @@ films = df[["name","score","released","budget", "gross", "votes", "rating", "run
 # Get the distinct ratings in the CSV and add them to the ratings table
 ratings_series = df[["rating"]].dropna()
 ratings = ratings_series.rating.unique()
-print (ratings)
 list_of_ratings = list(ratings) # Covert the numpy array to a Python List
 
 
